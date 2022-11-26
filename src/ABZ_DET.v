@@ -4,17 +4,17 @@ module ABZ_DET
     # ( parameter BIT_LENGTH = 12 
     )    
     (
-    input wire CLK,
-    input wire ARSTN,
-    input wire A_IN,    // Async
-    input wire B_IN,    // Async
-    input wire Z_IN,    // Async
-    input wire EN_INIT_IN,
-    input wire [BIT_LENGTH-1:0] INIT_COUNT,
-    input wire [BIT_LENGTH-1:0] POS_OFFSET,
-    input wire EN_OUTPUT_IN,
-    output reg [BIT_LENGTH-1:0] CNT_OUT,    // quadruple
-    output reg [BIT_LENGTH-1:0] CNT_OUT_LATCH // quadruple
+    input wire CLK,     // clock
+    input wire ARSTN,   // Async Reset (inverted)
+    input wire A_IN,    // Async input
+    input wire B_IN,    // Async input
+    input wire Z_IN,    // Async input
+    input wire EN_INIT_IN,                  // Enable initialize position value
+    input wire [BIT_LENGTH-1:0] INIT_COUNT, // Initial encoder count value for 
+    input wire [BIT_LENGTH-1:0] POS_OFFSET, // Position offset value for zero position
+    input wire EN_OUTPUT_IN,                // Enable output 
+    output reg [BIT_LENGTH-1:0] CNT_OUT,    // continuous count output
+    output reg [BIT_LENGTH-1:0] LATCHED_CNT_OUT // Latched count output with EN_OUTPUT_IN
 );
 
 reg [1:0] A_IN_TMP;
@@ -102,11 +102,11 @@ end
 // Latched count output 
 always @(posedge CLK or negedge ARSTN) begin
     if (!ARSTN) begin
-        CNT_OUT_LATCH <= 0;
+        LATCHED_CNT_OUT <= 0;
     end
     else begin
         if (EN_OUTPUT_IN) begin
-            CNT_OUT_LATCH <= CNT_OUT;
+            LATCHED_CNT_OUT <= CNT_OUT;
         end
     end
 end
